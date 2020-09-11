@@ -4,7 +4,9 @@ const path = require('path');
 
 const expressLayouts = require('express-ejs-layouts');
 const expressPartials = require('express-partial');
+
 const mongoose = require('mongoose');
+const db = require('./config/mongoose');
 
 const app = express();
 const PORT = 8080;
