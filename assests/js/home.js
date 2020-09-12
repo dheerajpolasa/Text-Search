@@ -62,9 +62,7 @@
   // Function to send Ajax request to server to add the question to db
   function sendAjaxRequest(event) {
     event.preventDefault();
-    console.log(event.keyCode);
     if (event.key === 'Enter') {
-      console.log('Enter');
       return;
     }
     const question = $("#new-question-form input[name='question']").val();
@@ -93,7 +91,6 @@
       },
       url: '/questions/add',
       success: function (data) {
-        console.log(data);
         sendNotySuccess(data.message);
         $('#new-question-form')[0].reset();
         resetTags();
@@ -167,11 +164,9 @@
         type: 'get',
         url: '/questions/search?text=' + $(this).val(),
         success: function (data) {
-          console.log(data);
           $('#questions-container .questions').empty();
           for (let question of data.data.questions) {
             const questionDOM = getQuestionDOM(question);
-            console.log(questionDOM);
             $('#questions-container .questions').prepend(questionDOM);
           }
         },
