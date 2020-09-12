@@ -3,6 +3,7 @@
   const tagInput = $('.tag-container input');
   const form = $('#new-question-form');
   const formSubmitBtn = $('#form-submit-btn');
+  const searchInput = $('#search-input');
 
   let tags = [];
 
@@ -73,10 +74,22 @@
     let form = new FormData();
     const question = $("#new-question-form input[name='question']").val();
     const topic = $("#new-question-form input[name='topic']").val();
+    if (question === '' || !question) {
+      sendNotyError('Question is required');
+      return;
+    }
 
+    if (topic === '' || !topic) {
+      sendNotyError('Topic is required');
+      return;
+    }
     form.append('question', question);
     form.append('topic', topic);
     console.log(tags);
+    if (tags.length == 0) {
+      sendNotyError('Atleast one tag is required');
+      return;
+    }
     form.append('tags', JSON.stringify(tags));
 
     for (let pair of form.entries()) {
@@ -99,11 +112,34 @@
         $('#new-question-form')[0].reset();
         resetTags();
         tags = [];
+        const questionDOM = getQuestionDOM(data.data.question);
+        $('#questions-container .questions').prepend(questionDOM);
       },
     });
   }
 
-  // Send Noty Success Error
+  // To get the question DOM
+  function getQuestionDOM(question) {
+    return `
+    <div class="question">
+      <h1>${question.question}</h1>
+      <div class="question-sub-topics">
+        <div class="topic">${question.topic}</div>
+        <div>
+          <ul class="question-tags">
+            ${question.tags
+              .map(function (tag) {
+                return "<li class='question-tag'>" + tag + '</li>';
+              })
+              .join('')}
+          </ul>
+        </div>
+      </div>
+    </div>
+    `;
+  }
+
+  // Send Noty Success
   function sendNotySuccess(message) {
     new Noty({
       theme: 'relax',
@@ -114,12 +150,56 @@
     }).show();
   }
 
+  // Send Noty Success
+  function sendNotyError(message) {
+    new Noty({
+      theme: 'relax',
+      layout: 'topRight',
+      timeout: 1500,
+      type: 'success',
+      text: message,
+    }).show();
+  }
+
+  // Search for the questions
+  function searchQuestions(event) {
+    event.preventDefault();
+
+    if (event.key == 'Enter') {
+      $('#questions-container .questions').empty();
+      $('#questions-container .questions').html(`
+        <div id="spinner-container">  
+          <div class="spinner-border text-primary" role="status" id="spinner">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+      `);
+      $.ajax({
+        type: 'post',
+        url: '/questions/search',
+        data: {
+          search: $(this).val(),
+        },
+        success: function (data) {
+          console.log(data);
+          $('#questions-container .questions').empty();
+          for (let question of data.data.questions) {
+            const questionDOM = getQuestionDOM(question);
+            console.log(questionDOM);
+            $('#questions-container .questions').prepend(questionDOM);
+          }
+        },
+      });
+    }
+  }
+
   // Initialize all the event listeners here
   function init() {
     $(tagInput).keyup(addTag);
     $(form).submit(stopFormSubmit);
     $(document).click(deleteTag);
     $(formSubmitBtn).click(sendAjaxRequest);
+    $(searchInput).keyup(searchQuestions);
   }
 
   init();

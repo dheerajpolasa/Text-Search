@@ -23,3 +23,31 @@ module.exports.add = async function (req, res) {
     return res.redirect('back');
   } catch (err) {}
 };
+
+module.exports.search = async function (req, res) {
+  try {
+    console.log(req.body);
+    const tags = await Question.find({
+      tags: { $regex: req.body.search, $options: 'i' },
+    });
+    const questions = await Question.find({
+      question: { $regex: req.body.search, $options: 'i' },
+    });
+    console.log(tags, questions);
+
+    const allQuestions = [...tags, ...questions].map((question) =>
+      JSON.stringify(question)
+    );
+    const uniqueQuestions = allQuestions
+      .filter((value, index) => allQuestions.indexOf(value) === index)
+      .map((question) => JSON.parse(question));
+
+    if (req.xhr) {
+      return res.json(201, {
+        data: {
+          questions: uniqueQuestions,
+        },
+      });
+    }
+  } catch (err) {}
+};

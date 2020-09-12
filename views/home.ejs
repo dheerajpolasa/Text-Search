@@ -1,18 +1,66 @@
 <link rel="stylesheet" href="/css/home.css" />
-<div>
-  <div id="form-container">
-    <form action="/questions/add" method="POST" id="new-question-form">
-      <input type="text" name="question" placeholder="Enter your question" />
-      <input type="text" name="topic" placeholder="Enter the topic" />
-      <div class="tag-container">
-        <input />
+<div id="home-container">
+  <section id="left">
+    <div id="actions-heading">Actions</div>
+    <div id="action-buttons">
+      <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#newQuestionModal">
+        New Question
+      </button>
+    </div>
+  </section>
+  <section id="right">
+    <div id="search-container">
+      <div class="md-form mt-0" id="search-div">
+        <input class="form-control" type="text" placeholder="Search" id="search-input" aria-label="Search">
       </div>
-    </form>
-    <form id="submit-form">
-      <div class="submit">
-        <button id="form-submit-btn">Submit</button>
+    </div>
+    <div id="questions-container">
+      <div class="questions">
+        <% for (question of questions) { %>
+        <div class="question">
+          <h1><%= question.question %></h1>
+          <div class="question-sub-topics">
+            <div class="topic"><%= question.topic %></div>
+            <div>
+              <ul class="question-tags">
+                <% for (tag of question.tags) {%>
+                <li class="question-tag"><%= tag %></li>
+                <%}%>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <% } %>
+            </div>
+          </div>
+  </section>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="newQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">New Question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    </form>
+      <div class="modal-body mx-3" id="form-container">
+        <form action="/questions/add" method="POST" id="new-question-form">
+          <input type="text" name="question" placeholder="Enter your question" />
+          <input type="text" name="topic" placeholder="Enter the topic" />
+          <div class="tag-container">
+            <input placeholder="Enter the tag" />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="form-submit-btn">Submit</button>
+      </div>
+    </div>
   </div>
 </div>
 
