@@ -39,7 +39,6 @@
   function addTag(e) {
     e.stopPropagation();
     if (e.key === 'Enter') {
-      console.log(e.target);
       tags.push(e.target.value);
       addTags();
       $(e.target).val('');
@@ -53,12 +52,9 @@
 
   // Function to delete the tag from DOM
   function deleteTag(event) {
-    console.log('Documents', $(event.target));
     if ($(event.target).prop('tagName') === 'I') {
-      console.log('Hey');
       const deleteTagValue = $(event.target).attr('data-attr');
       tags = tags.filter((tag) => tag !== deleteTagValue);
-      console.log(tags);
       addTags();
     }
   }
@@ -71,7 +67,6 @@
       console.log('Enter');
       return;
     }
-    let form = new FormData();
     const question = $("#new-question-form input[name='question']").val();
     const topic = $("#new-question-form input[name='topic']").val();
     if (question === '' || !question) {
@@ -83,20 +78,11 @@
       sendNotyError('Topic is required');
       return;
     }
-    form.append('question', question);
-    form.append('topic', topic);
-    console.log(tags);
+
     if (tags.length == 0) {
       sendNotyError('Atleast one tag is required');
       return;
     }
-    form.append('tags', JSON.stringify(tags));
-
-    for (let pair of form.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
-
-    console.log(form);
 
     $.ajax({
       type: 'post',
@@ -114,6 +100,9 @@
         tags = [];
         const questionDOM = getQuestionDOM(data.data.question);
         $('#questions-container .questions').prepend(questionDOM);
+      },
+      error: function (err) {
+        sendNotyError(JSON.parse(err.reponseText));
       },
     });
   }
@@ -156,7 +145,7 @@
       theme: 'relax',
       layout: 'topRight',
       timeout: 1500,
-      type: 'success',
+      type: 'error',
       text: message,
     }).show();
   }
@@ -175,11 +164,8 @@
         </div>
       `);
       $.ajax({
-        type: 'post',
-        url: '/questions/search',
-        data: {
-          search: $(this).val(),
-        },
+        type: 'get',
+        url: '/questions/search?text=' + $(this).val(),
         success: function (data) {
           console.log(data);
           $('#questions-container .questions').empty();
@@ -188,6 +174,9 @@
             console.log(questionDOM);
             $('#questions-container .questions').prepend(questionDOM);
           }
+        },
+        error: function (err) {
+          sendNotyError(JSON.parse(err.reponseText));
         },
       });
     }

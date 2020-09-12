@@ -3,8 +3,10 @@ const router = express.Router();
 
 const questionsController = require('../controllers/questions_controller');
 
+// Route to hanlde the new question
 router.post('/add', questionsController.add);
 
-router.post('/search', questionsController.search);
+// Route to search the
+router.get('/search', questionsController.search);
 
 module.exports = router;

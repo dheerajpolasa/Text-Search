@@ -1,16 +1,13 @@
 const Question = require('../models/question');
 
+// Add new questions to database
 module.exports.add = async function (req, res) {
   try {
-    console.log(req.body);
-    // return res.redirect('back');
     const question = await Question.create({
       question: req.body.question,
       topic: req.body.topic,
       tags: JSON.parse(req.body.tags),
     });
-
-    console.log(question);
 
     if (req.xhr) {
       return res.json(201, {
@@ -21,19 +18,22 @@ module.exports.add = async function (req, res) {
       });
     }
     return res.redirect('back');
-  } catch (err) {}
+  } catch (err) {
+    return res.json(500, {
+      error: 'Internal server error',
+    });
+  }
 };
 
+// Search the questions in the database
 module.exports.search = async function (req, res) {
   try {
-    console.log(req.body);
     const tags = await Question.find({
-      tags: { $regex: req.body.search, $options: 'i' },
+      tags: { $regex: req.query.text, $options: 'i' },
     });
     const questions = await Question.find({
-      question: { $regex: req.body.search, $options: 'i' },
+      question: { $regex: req.query.text, $options: 'i' },
     });
-    console.log(tags, questions);
 
     const allQuestions = [...tags, ...questions].map((question) =>
       JSON.stringify(question)
@@ -49,5 +49,11 @@ module.exports.search = async function (req, res) {
         },
       });
     }
-  } catch (err) {}
+  } catch (err) {
+    if (req.xhr) {
+      return res.json(500, {
+        error: 'Internal service error',
+      });
+    }
+  }
 };
