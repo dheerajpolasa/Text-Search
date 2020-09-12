@@ -1,15 +1,19 @@
+<link rel="stylesheet" href="/css/home.css" />
 <div>
-  <div>
+  <div id="form-container">
     <form action="/questions/add" method="POST" id="new-question-form">
       <input type="text" name="question" placeholder="Enter your question" />
       <input type="text" name="topic" placeholder="Enter the topic" />
-      <input
-        type="text"
-        name="tags"
-        placeholder="Enter the tags"
-        id="tags-input"
-      />
-      <input type="submit" value="submit" />
+      <div class="tag-container">
+        <input />
+      </div>
+    </form>
+    <form id="submit-form">
+      <div class="submit">
+        <button id="form-submit-btn">Submit</button>
+      </div>
     </form>
   </div>
 </div>
+
+<script src="/js/home.js"></script>

@@ -1,7 +1,11 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const homeController = require('../controllers/home_controller');
+
 const router = express.Router();
 
-const homeController = require('../controllers/home_controller');
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json());
 
 // Router to handle the home page
 router.get('/', homeController.home);
