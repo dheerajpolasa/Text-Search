@@ -1,5 +1,6 @@
 # Text-Search
 
+### Project is deployed here https://text-search-app.herokuapp.com/
 > A Full stack application for inserting the questions into database and retrieving them by searching
 
 > Dependencies/Libraries
